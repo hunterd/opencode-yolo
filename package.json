@@ -6,6 +6,16 @@
   "description": "OpenCode plugin that auto-replies to assistant messages so you don't have to manually confirm or approve",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./tui": {
+      "types": "./dist/tui.d.ts",
+      "default": "./dist/tui.js"
+    }
+  },
   "scripts": {
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc",

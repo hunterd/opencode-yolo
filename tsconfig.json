@@ -24,6 +24,7 @@
     "isQuestion.ts",
     "commands.ts",
     "state.ts",
+    "tui.ts",
     "version.ts"
   ],
   "exclude": [
