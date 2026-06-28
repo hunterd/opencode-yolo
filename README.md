@@ -1,8 +1,10 @@
 # opencode-yolo
 
-OpenCode plugin that auto-replies to assistant messages so you don't have to manually confirm, approve, or answer clarification questions.
+OpenCode plugin that auto-replies to assistant messages so you don't have to manually confirm, approve, or answer clarification questions — with an interactive TUI dialog to switch modes.
 
 ## Install
+
+### Backend hooks
 
 Add to your OpenCode config (`~/.config/opencode/opencode.json` for global, or `.opencode/opencode.json` for per-project):
 
@@ -30,11 +32,56 @@ arguments:
 ---
 ```
 
+### TUI dialog (optional)
+
+For an interactive mode selector that shows the current status, add the plugin to your TUI config (`~/.config/opencode/tui.json`):
+
+```json
+{
+  "plugin": [
+    "oh-my-opencode-slim",
+    "@frankhommers/opencode-yolo/tui"
+  ]
+}
+```
+
+Now typing `/yolo` opens an in-terminal dialog with the current mode displayed, rather than running through the agent. The same dialog is also accessible via Ctrl+P → search "yolo".
+
 ## Modes
 
-- **off** — Plugin is passive. No auto-replies.
-- **on** — Replies to detected questions, proceed statements, and soft permission asks.
-- **aggressive** — Everything `on` does, plus sends a continuation prompt for any assistant message that doesn't match a pattern.
+| Mode | Behaviour |
+|------|-----------|
+| **off** | Plugin is passive. No auto-replies. |
+| **on** | Replies to detected questions, proceed statements, and soft permission asks. |
+| **aggressive** | Everything `on` does, plus sends a continuation prompt for any assistant message that doesn't match a pattern. |
+
+## Commands
+
+### Slash commands
+
+- `/yolo` — Opens the interactive TUI dialog (if TUI plugin is loaded), otherwise runs `/yolo status`
+- `/yolo on` — Enable normal mode
+- `/yolo aggressive` — Enable aggressive mode
+- `/yolo off` — Disable
+- `/yolo status` — Show current mode
+- `/yolo start` — Kick off work with current mode
+
+### TUI dialog
+
+When the TUI plugin is loaded, `/yolo` (without arguments) shows a `DialogSelect` with the current mode pre-selected:
+
+```
+┌─────────────────────────────┐
+│  YOLO Mode — On        esc  │
+├─────────────────────────────┤
+│ ○ Off  Require manual ...   │
+│ ● On   Currently active...  │
+│ ○ Aggressive Auto-approve…  │
+└─────────────────────────────┘
+```
+
+- The active mode is marked with **●** and its description reads *"Currently active — …"*
+- Selecting a mode writes `.yolo.json` and closes the dialog
 
 ## Replies
 
@@ -45,15 +92,6 @@ arguments:
 | No match (aggressive only) | "What can we do now to reach the final result in the best way possible?" |
 
 Pattern matching is bilingual: English and Dutch.
-
-## Commands
-
-- `/yolo` — Toggle on/off
-- `/yolo on` — Enable normal mode
-- `/yolo aggressive` — Enable aggressive mode
-- `/yolo off` — Disable
-- `/yolo status` — Show current mode
-- `/yolo start` — Kick off work with current mode
 
 ## Config file
 
@@ -66,6 +104,8 @@ npm install
 npm test
 npm run build
 ```
+
+The TUI plugin source is in `tui.ts` and compiles to `dist/tui.js`. It is a separate entry point (`@frankhommers/opencode-yolo/tui`) that does not depend on the hooks plugin.
 
 ## License
 
